@@ -197,14 +197,30 @@ class SlideshowViewer:
             print(f"Error loading image {index}: {e}")
 
     def resize_image(self, image):
+        window_width = self.root.winfo_width()
+        window_height = self.root.winfo_height()
+
+        # Apply fullscreen dimensions if in fullscreen mode
         if self.is_fullscreen:
-            screen_width = self.root.winfo_screenwidth()
-            screen_height = self.root.winfo_screenheight()
-            new_size = (screen_width, screen_height)
+            window_width = self.root.winfo_screenwidth()
+            window_height = self.root.winfo_screenheight()
+
+        # Calculate new image size
+        width, height = image.size
+        aspect_ratio = width / height
+        new_width = window_width * self.zoom_factor
+        new_height = window_height * self.zoom_factor
+
+        # Ensure new dimensions are integers
+        new_width = int(new_width)
+        new_height = int(new_height)
+
+        if new_width / new_height > aspect_ratio:
+            new_width = int(new_height * aspect_ratio)
         else:
-            width, height = image.size
-            new_size = (int(width * self.zoom_factor), int(height * self.zoom_factor))
-        return image.resize(new_size)
+            new_height = int(new_width / aspect_ratio)
+
+        return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
     def show_image(self):
         # Only show the image if it's in the cache
