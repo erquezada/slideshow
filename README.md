@@ -1,2 +1,2 @@
-# slideshow
-slideshow program written in python
+# Apps
+computer programmable applications written in python
